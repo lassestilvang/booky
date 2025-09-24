@@ -1,11 +1,18 @@
 import { Queue } from "bullmq";
 
+// Validate environment variables
+if (!process.env.REDIS_URL) {
+  throw new Error("REDIS_URL environment variable is required");
+}
+
+const redisUrl = new URL(process.env.REDIS_URL);
+
 const bookmarkQueue = new Queue("bookmark-processing", {
   connection: {
-    host:
-      process.env.REDIS_URL?.replace("redis://", "").split(":")[0] ||
-      "localhost",
-    port: parseInt(process.env.REDIS_URL?.split(":")[2] || "6379"),
+    host: redisUrl.hostname,
+    port: parseInt(redisUrl.port) || 6379,
+    username: redisUrl.username || undefined,
+    password: redisUrl.password || undefined,
   },
 });
 

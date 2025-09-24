@@ -3,7 +3,6 @@ import apiClient from "@/api/client";
 import {
   mockBookmarks,
   mockApiResponses,
-  mockErrors,
 } from "../../../tests/fixtures/frontend/mocks";
 
 // Mock the API client

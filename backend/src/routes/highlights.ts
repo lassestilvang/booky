@@ -18,7 +18,7 @@ router.get(
       // Check if bookmark exists and is owned by user
       const bookmarkResult = await pool.query(
         "SELECT id FROM bookmarks WHERE id = $1 AND owner_id = $2",
-        [bookmarkId, req.user!.id]
+        [bookmarkId, req.user!.userId]
       );
 
       if (bookmarkResult.rows.length === 0) {
@@ -28,7 +28,7 @@ router.get(
       // Fetch highlights
       const highlightsResult = await pool.query(
         "SELECT id, bookmark_id, text_selected, color, annotation_md, position_context, created_at FROM highlights WHERE bookmark_id = $1 AND owner_id = $2 ORDER BY created_at",
-        [bookmarkId, req.user!.id]
+        [bookmarkId, req.user!.userId]
       );
 
       res.json(highlightsResult.rows);
@@ -62,7 +62,7 @@ router.post(
       // Check if bookmark exists and is owned by user
       const bookmarkResult = await pool.query(
         "SELECT id FROM bookmarks WHERE id = $1 AND owner_id = $2",
-        [bookmarkIdNum, req.user!.id]
+        [bookmarkIdNum, req.user!.userId]
       );
 
       if (bookmarkResult.rows.length === 0) {
@@ -76,7 +76,7 @@ router.post(
          RETURNING id, bookmark_id, text_selected, color, annotation_md, position_context, created_at`,
         [
           bookmarkIdNum,
-          req.user!.id,
+          req.user!.userId,
           text,
           color || null,
           annotation_md || null,
@@ -119,7 +119,7 @@ router.put(
              annotation_md = COALESCE($2, annotation_md)
          WHERE id = $3 AND owner_id = $4
          RETURNING id, bookmark_id, text_selected, color, annotation_md, position_context, created_at`,
-        [color, annotation_md, highlightId, req.user!.id]
+        [color, annotation_md, highlightId, req.user!.userId]
       );
 
       if (result.rows.length === 0) {
@@ -147,7 +147,7 @@ router.delete(
     try {
       const result = await pool.query(
         "DELETE FROM highlights WHERE id = $1 AND owner_id = $2",
-        [highlightId, req.user!.id]
+        [highlightId, req.user!.userId]
       );
 
       if (result.rowCount === 0) {

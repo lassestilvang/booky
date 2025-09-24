@@ -9,8 +9,17 @@ import tagsRoutes from "./routes/tags";
 
 dotenv.config();
 
+interface AppError extends Error {
+  status?: number;
+}
+
 const app = express();
-const PORT = process.env.PORT || 3000;
+
+// Validate PORT environment variable
+const PORT = parseInt(process.env.PORT || "3000", 10);
+if (isNaN(PORT)) {
+  throw new Error("PORT environment variable must be a valid number");
+}
 
 // Middleware
 app.use(express.json());
@@ -26,14 +35,14 @@ app.use("/v1/tags", tagsRoutes);
 // Error handling middleware
 app.use(
   (
-    err: any,
+    err: AppError,
     req: express.Request,
     res: express.Response,
     next: express.NextFunction
   ) => {
     console.error(err.stack);
     res
-      .status(500)
+      .status(err.status || 500)
       .json({ error: "Internal Server Error", message: err.message });
   }
 );

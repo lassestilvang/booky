@@ -36,40 +36,50 @@ describe("Background Jobs Integration Tests", () => {
 
       expect(response.status).toBe(202);
 
-      // Check that job was added (this might need adjustment based on queue implementation)
+      // Check that job was added
       const afterJobCount = await bookmarkQueue.getWaiting();
-      // Note: In real scenario, job might be processed quickly, so count might not increase
-      expect(afterJobCount.length).toBeGreaterThanOrEqual(
-        initialJobCount.length - 1
-      ); // Allow for processing
+      expect(afterJobCount.length).toBe(initialJobCount.length + 1);
     });
   });
 
   describe("Queue processing", () => {
+    const pollBookmark = async (
+      bookmarkId: number,
+      maxAttempts: number = 10
+    ): Promise<any> => {
+      for (let i = 0; i < maxAttempts; i++) {
+        const response = await request(app)
+          .get(`/v1/bookmarks/${bookmarkId}`)
+          .set("Authorization", `Bearer ${token}`);
+
+        if (response.status === 200 && response.body.content_indexed) {
+          return response.body;
+        }
+        await new Promise((resolve) => setTimeout(resolve, 1000));
+      }
+      throw new Error(
+        "Bookmark processing did not complete within expected time"
+      );
+    };
+
     it("should process bookmark and update database", async () => {
-      // Create bookmark
+      // Create bookmark with a local test URL (using a simple HTML response)
       const createResponse = await request(app)
         .post("/v1/bookmarks")
         .set("Authorization", `Bearer ${token}`)
         .send({
-          url: "https://httpbin.org/html", // Use a real URL for testing
+          url: "http://localhost:3000/test-html", // Use local test server
           title: "Test Processing",
         });
 
       expect(createResponse.status).toBe(202);
       const bookmarkId = createResponse.body.id;
 
-      // Wait for processing (in real tests, might need longer wait or polling)
-      await new Promise((resolve) => setTimeout(resolve, 5000));
+      // Poll for processing completion
+      const processedBookmark = await pollBookmark(bookmarkId);
 
-      // Check if bookmark was updated
-      const getResponse = await request(app)
-        .get(`/v1/bookmarks/${bookmarkId}`)
-        .set("Authorization", `Bearer ${token}`);
-
-      expect(getResponse.status).toBe(200);
-      // Check if content_indexed is true or title was extracted
-      // Note: Depending on worker success
+      expect(processedBookmark.content_indexed).toBe(true);
+      expect(processedBookmark.title).toBe("Test Processing");
     });
   });
 

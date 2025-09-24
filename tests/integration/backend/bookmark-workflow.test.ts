@@ -6,6 +6,7 @@ const app = createApp();
 describe("Bookmark Workflow Integration Tests", () => {
   let token: string;
   let bookmarkId: number;
+  let collectionId: number;
 
   beforeAll(async () => {
     await setupTestDatabase();
@@ -16,6 +17,16 @@ describe("Bookmark Workflow Integration Tests", () => {
       password: "password1",
     });
     token = response.body.token;
+
+    // Create a test collection
+    const collectionResponse = await request(app)
+      .post("/v1/collections")
+      .set("Authorization", `Bearer ${token}`)
+      .send({
+        title: "Test Collection",
+        icon: "📁",
+      });
+    collectionId = collectionResponse.body.id;
   });
 
   afterAll(async () => {
@@ -31,7 +42,7 @@ describe("Bookmark Workflow Integration Tests", () => {
           url: "https://example.com/test-article",
           title: "Test Article",
           excerpt: "This is a test article",
-          collectionId: 1,
+          collectionId: collectionId,
         });
 
       expect(response.status).toBe(202);

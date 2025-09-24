@@ -1,12 +1,10 @@
 import db from "./db";
-// Note: Add bcrypt to dependencies: npm install bcrypt @types/bcrypt
-// import bcrypt from "bcrypt";
+import bcrypt from "bcrypt";
 
 async function seed() {
   try {
     // Create a test user
-    // const hashedPassword = await bcrypt.hash("password123", 10);
-    const hashedPassword = "password123"; // Plain for demo, use bcrypt in production
+    const hashedPassword = await bcrypt.hash("password123", 10);
     await db.query(
       "INSERT INTO users (email, password_hash, name) VALUES ($1, $2, $3) ON CONFLICT (email) DO NOTHING",
       ["test@example.com", hashedPassword, "Test User"]

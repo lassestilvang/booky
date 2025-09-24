@@ -1,6 +1,11 @@
 import request from "supertest";
 import { createApp, setupTestDatabase, teardownTestDatabase } from "../setup";
 
+// Test constants
+const TEST_USER_EMAIL = "john.doe@example.com";
+const TEST_USER_PASSWORD = "password1";
+const TEST_USER_NAME = "John Doe";
+
 const app = createApp();
 
 describe("Auth Flow Integration Tests", () => {
@@ -15,19 +20,19 @@ describe("Auth Flow Integration Tests", () => {
   describe("POST /v1/auth/login", () => {
     it("should login with valid credentials and return token", async () => {
       const response = await request(app).post("/v1/auth/login").send({
-        email: "john.doe@example.com",
-        password: "password1", // Assuming this matches the hash
+        email: TEST_USER_EMAIL,
+        password: TEST_USER_PASSWORD,
       });
 
       expect(response.status).toBe(200);
       expect(response.body).toHaveProperty("token");
       expect(response.body).toHaveProperty("user");
-      expect(response.body.user.email).toBe("john.doe@example.com");
+      expect(response.body.user.email).toBe(TEST_USER_EMAIL);
     });
 
     it("should return 400 for invalid credentials", async () => {
       const response = await request(app).post("/v1/auth/login").send({
-        email: "john.doe@example.com",
+        email: TEST_USER_EMAIL,
         password: "wrongpassword",
       });
 
@@ -41,8 +46,8 @@ describe("Auth Flow Integration Tests", () => {
     beforeAll(async () => {
       // Login to get token
       const response = await request(app).post("/v1/auth/login").send({
-        email: "john.doe@example.com",
-        password: "password1",
+        email: TEST_USER_EMAIL,
+        password: TEST_USER_PASSWORD,
       });
       token = response.body.token;
     });
@@ -53,8 +58,8 @@ describe("Auth Flow Integration Tests", () => {
         .set("Authorization", `Bearer ${token}`);
 
       expect(response.status).toBe(200);
-      expect(response.body.email).toBe("john.doe@example.com");
-      expect(response.body.name).toBe("John Doe");
+      expect(response.body.email).toBe(TEST_USER_EMAIL);
+      expect(response.body.name).toBe(TEST_USER_NAME);
     });
 
     it("should return 401 without token", async () => {
@@ -69,8 +74,8 @@ describe("Auth Flow Integration Tests", () => {
 
     beforeAll(async () => {
       const response = await request(app).post("/v1/auth/login").send({
-        email: "john.doe@example.com",
-        password: "password1",
+        email: TEST_USER_EMAIL,
+        password: TEST_USER_PASSWORD,
       });
       token = response.body.token;
     });

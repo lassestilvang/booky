@@ -1,4 +1,5 @@
 import React from "react";
+import { Link } from "react-router-dom";
 
 const Sidebar: React.FC = () => {
   return (
@@ -6,14 +7,14 @@ const Sidebar: React.FC = () => {
       <h2 className="text-lg font-semibold mb-4">Collections</h2>
       <ul>
         <li className="mb-2">
-          <a href="#" className="text-blue-600">
+          <Link to="/bookmarks" className="text-blue-600">
             All Bookmarks
-          </a>
+          </Link>
         </li>
         <li className="mb-2">
-          <a href="#" className="text-blue-600">
+          <Link to="/favorites" className="text-blue-600">
             Favorites
-          </a>
+          </Link>
         </li>
         {/* Add more collections */}
       </ul>

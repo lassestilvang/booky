@@ -39,9 +39,6 @@ const ListView: React.FC<ListViewProps> = ({ bookmarks }) => {
               </div>
             )}
           </div>
-          <button className="text-blue-600 hover:text-blue-800 ml-4">
-            Edit
-          </button>
         </div>
       ))}
     </div>

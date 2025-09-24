@@ -24,9 +24,17 @@ const worker = new Worker(
 
       const { url } = bookmarkResult.rows[0];
 
-      // Fetch HTML
+      // Validate URL
+      try {
+        new URL(url);
+      } catch {
+        throw new Error(`Invalid URL: ${url}`);
+      }
+
+      // Fetch HTML with size limit for performance
       const response = await axios.get(url, {
         timeout: 10000,
+        maxContentLength: 5 * 1024 * 1024, // 5MB limit
         headers: {
           "User-Agent": "Mozilla/5.0 (compatible; BookyBot/1.0)",
         },

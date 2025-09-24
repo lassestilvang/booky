@@ -10,7 +10,7 @@ router.get(
   authenticateToken,
   async (req: AuthRequest, res: express.Response) => {
     try {
-      const userId = req.user!.id;
+      const userId = req.user!.userId;
 
       const query = `
         SELECT c.*, 'owner' as role FROM collections c WHERE c.owner_id = $1
@@ -44,7 +44,7 @@ router.post(
     }
 
     try {
-      const userId = req.user!.id;
+      const userId = req.user!.userId;
 
       const result = await pool.query(
         `INSERT INTO collections (owner_id, title, icon, created_at, updated_at)
@@ -75,7 +75,7 @@ router.get(
     }
 
     try {
-      const userId = req.user!.id;
+      const userId = req.user!.userId;
 
       // Check access: owner or has permission
       const accessQuery = `
@@ -124,7 +124,7 @@ router.put(
     }
 
     try {
-      const userId = req.user!.id;
+      const userId = req.user!.userId;
 
       // Check access and role
       const accessQuery = `
@@ -204,7 +204,7 @@ router.delete(
     }
 
     try {
-      const userId = req.user!.id;
+      const userId = req.user!.userId;
 
       // Check if owner
       const result = await pool.query(
@@ -249,7 +249,7 @@ router.post(
     }
 
     try {
-      const ownerId = req.user!.id;
+      const ownerId = req.user!.userId;
 
       // Check if owner
       const collectionResult = await pool.query(
@@ -314,7 +314,7 @@ router.get(
     }
 
     try {
-      const userId = req.user!.id;
+      const userId = req.user!.userId;
 
       // Check if owner
       const collectionResult = await pool.query(

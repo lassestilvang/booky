@@ -5,6 +5,7 @@ const app = createApp();
 
 describe("Search Indexing Integration Tests", () => {
   let token: string;
+  let testBookmarkId: number;
 
   beforeAll(async () => {
     await setupTestDatabase();
@@ -15,6 +16,18 @@ describe("Search Indexing Integration Tests", () => {
       password: "password1",
     });
     token = response.body.token;
+
+    // Seed test-specific bookmark
+    const bookmarkResponse = await request(app)
+      .post("/v1/bookmarks")
+      .set("Authorization", `Bearer ${token}`)
+      .send({
+        url: "https://example.com/test-search-bookmark",
+        title: "Test Search Bookmark with React content",
+        excerpt:
+          "This bookmark contains React and testing keywords for search indexing",
+      });
+    testBookmarkId = bookmarkResponse.body.id;
   });
 
   afterAll(async () => {
@@ -38,9 +51,28 @@ describe("Search Indexing Integration Tests", () => {
   });
 
   describe("GET /v1/search", () => {
+    const pollForIndexing = async (
+      bookmarkId: number,
+      maxAttempts: number = 10
+    ): Promise<void> => {
+      for (let i = 0; i < maxAttempts; i++) {
+        const response = await request(app)
+          .get(`/v1/bookmarks/${bookmarkId}`)
+          .set("Authorization", `Bearer ${token}`);
+
+        if (response.status === 200 && response.body.content_indexed) {
+          return;
+        }
+        await new Promise((resolve) => setTimeout(resolve, 1000));
+      }
+      throw new Error(
+        "Bookmark indexing did not complete within expected time"
+      );
+    };
+
     it("should search indexed bookmarks", async () => {
-      // Wait a bit for indexing (in real scenario, might need to poll or mock)
-      await new Promise((resolve) => setTimeout(resolve, 1000));
+      // Poll for indexing completion
+      await pollForIndexing(testBookmarkId);
 
       const response = await request(app)
         .get("/v1/search?q=React")
@@ -49,6 +81,11 @@ describe("Search Indexing Integration Tests", () => {
       expect(response.status).toBe(200);
       expect(response.body).toHaveProperty("bookmarks");
       expect(Array.isArray(response.body.bookmarks)).toBe(true);
+      // Check that our test bookmark is in the results
+      const hasTestBookmark = response.body.bookmarks.some(
+        (b: any) => b.id === testBookmarkId
+      );
+      expect(hasTestBookmark).toBe(true);
     });
 
     it("should filter by tags", async () => {

@@ -93,7 +93,7 @@ describe("useCollectionsStore", () => {
 
       const state = useCollectionsStore.getState();
       expect(state.collections).toHaveLength(2);
-      expect(state.collections.map((c) => c.id)).toEqual(["2", "3"]);
+      expect(state.collections.map((c: any) => c.id)).toEqual(["2", "3"]);
     });
   });
 });

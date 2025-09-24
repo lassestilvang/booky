@@ -52,6 +52,18 @@ export const createApp = () => {
 };
 
 export const clearDatabase = async () => {
+  const allowedTables = new Set([
+    "collection_permissions",
+    "bookmark_tags",
+    "highlights",
+    "files",
+    "backups",
+    "bookmarks",
+    "tags",
+    "collections",
+    "users",
+  ]);
+
   const tables = [
     "collection_permissions",
     "bookmark_tags",
@@ -65,6 +77,9 @@ export const clearDatabase = async () => {
   ];
 
   for (const table of tables) {
+    if (!allowedTables.has(table)) {
+      throw new Error(`Invalid table name: ${table}`);
+    }
     await pool.query(`DELETE FROM ${table}`);
   }
 };
@@ -142,8 +157,22 @@ export const seedDatabase = async () => {
     );
   }
 
-  // Insert bookmark_tags if any
-  // Assuming fixtures have bookmark_tags, but not shown, so skip for now
+  // Insert bookmark_tags
+  // Sample data: associate some bookmarks with tags
+  const bookmarkTagsData = [
+    { bookmark_id: 1, tag_id: 1 },
+    { bookmark_id: 2, tag_id: 2 },
+    { bookmark_id: 3, tag_id: 1 },
+  ];
+
+  for (const bt of bookmarkTagsData) {
+    await pool.query(
+      `INSERT INTO bookmark_tags (bookmark_id, tag_id)
+       VALUES ($1, $2)
+       ON CONFLICT (bookmark_id, tag_id) DO NOTHING`,
+      [bt.bookmark_id, bt.tag_id]
+    );
+  }
 };
 
 export const setupTestDatabase = async () => {

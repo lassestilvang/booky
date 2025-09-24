@@ -51,7 +51,7 @@ router.get(
   async (req: AuthRequest, res: express.Response) => {
     try {
       const query: SearchQuery = req.query as any;
-      const userId = req.user!.id;
+      const userId = req.user!.userId;
 
       // Parse parameters
       const searchQuery = query.q || "";

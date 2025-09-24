@@ -1,12 +1,10 @@
-import React from "react";
+declare const global: any;
+
 import { render, screen, fireEvent, waitFor } from "@testing-library/react";
 import "@testing-library/jest-dom";
 import BookmarksPage from "@/components/BookmarksPage";
 import { useBookmarksStore } from "@/stores/bookmarks";
-import {
-  mockBookmarks,
-  mockApiResponses,
-} from "../../../tests/fixtures/frontend/mocks";
+import { mockBookmarks } from "../../../tests/fixtures/frontend/mocks";
 
 // Mock the store
 jest.mock("@/stores/bookmarks");

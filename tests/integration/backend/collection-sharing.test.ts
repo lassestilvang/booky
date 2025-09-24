@@ -7,23 +7,33 @@ describe("Collection Sharing Integration Tests", () => {
   let ownerToken: string;
   let sharedUserToken: string;
   let collectionId: number;
+  let ownerId: number;
+  let sharedUserId: number;
 
   beforeAll(async () => {
     await setupTestDatabase();
 
-    // Login as owner (john.doe@example.com)
-    const ownerResponse = await request(app).post("/v1/auth/login").send({
-      email: "john.doe@example.com",
-      password: "password1",
-    });
-    ownerToken = ownerResponse.body.token;
+    // Create owner user dynamically
+    const ownerCreateResponse = await request(app)
+      .post("/v1/auth/register")
+      .send({
+        email: "owner@example.com",
+        password: "password123",
+        name: "Test Owner",
+      });
+    ownerId = ownerCreateResponse.body.user.id;
+    ownerToken = ownerCreateResponse.body.token;
 
-    // Login as shared user (jane.smith@example.com)
-    const sharedResponse = await request(app).post("/v1/auth/login").send({
-      email: "jane.smith@example.com",
-      password: "password2",
-    });
-    sharedUserToken = sharedResponse.body.token;
+    // Create shared user dynamically
+    const sharedCreateResponse = await request(app)
+      .post("/v1/auth/register")
+      .send({
+        email: "shared@example.com",
+        password: "password123",
+        name: "Test Shared User",
+      });
+    sharedUserId = sharedCreateResponse.body.user.id;
+    sharedUserToken = sharedCreateResponse.body.token;
   });
 
   afterAll(async () => {
@@ -53,7 +63,7 @@ describe("Collection Sharing Integration Tests", () => {
         .post(`/v1/collections/${collectionId}/share`)
         .set("Authorization", `Bearer ${ownerToken}`)
         .send({
-          email: "jane.smith@example.com",
+          email: "shared@example.com",
           role: "editor",
         });
 
@@ -133,9 +143,23 @@ describe("Collection Sharing Integration Tests", () => {
 
   describe("DELETE /v1/collections/:id/share (unshare)", () => {
     it("should remove sharing permission", async () => {
-      // For simplicity, since there's no unshare endpoint, we can test by deleting permission directly
-      // But to keep it simple, just verify the sharing worked
-      expect(true).toBe(true);
+      // Test unsharing by calling the unshare endpoint (assuming it exists)
+      const unshareResponse = await request(app)
+        .delete(`/v1/collections/${collectionId}/share`)
+        .set("Authorization", `Bearer ${ownerToken}`)
+        .send({
+          userId: sharedUserId,
+        });
+
+      expect(unshareResponse.status).toBe(200);
+      expect(unshareResponse.body.message).toBe("Collection unshared successfully");
+
+      // Verify that shared user can no longer access the collection
+      const accessResponse = await request(app)
+        .get(`/v1/collections/${collectionId}`)
+        .set("Authorization", `Bearer ${sharedUserToken}`);
+
+      expect(accessResponse.status).toBe(403); // Forbidden
     });
   });
 });

@@ -9,7 +9,7 @@ router.get(
   "/",
   authenticateToken,
   async (req: AuthRequest, res: express.Response) => {
-    const ownerId = req.user!.id;
+    const ownerId = req.user!.userId;
 
     try {
       const result = await pool.query(
@@ -43,7 +43,7 @@ router.post(
 
     const trimmedName = name.trim();
     const normalizedName = trimmedName.toLowerCase();
-    const ownerId = req.user!.id;
+    const ownerId = req.user!.userId;
 
     try {
       const result = await pool.query(
@@ -83,7 +83,7 @@ router.put(
 
     const trimmedName = name.trim();
     const normalizedName = trimmedName.toLowerCase();
-    const ownerId = req.user!.id;
+    const ownerId = req.user!.userId;
 
     try {
       const result = await pool.query(
@@ -120,7 +120,7 @@ router.delete(
       return res.status(400).json({ error: "Invalid tag ID" });
     }
 
-    const ownerId = req.user!.id;
+    const ownerId = req.user!.userId;
 
     try {
       const result = await pool.query(
@@ -148,15 +148,13 @@ router.post(
     const { sourceTagId, targetTagId } = req.body;
 
     if (!sourceTagId || !targetTagId || sourceTagId === targetTagId) {
-      return res
-        .status(400)
-        .json({
-          error:
-            "Valid source and target tag IDs required, and they must be different",
-        });
+      return res.status(400).json({
+        error:
+          "Valid source and target tag IDs required, and they must be different",
+      });
     }
 
-    const ownerId = req.user!.id;
+    const ownerId = req.user!.userId;
 
     try {
       // Check if both tags exist and belong to user
@@ -179,11 +177,13 @@ router.post(
 
       // Add target tag to all these bookmarks, ignoring conflicts
       if (bookmarkIds.length > 0) {
-        const values = bookmarkIds
-          .map((id) => `(${id}, ${targetTagId})`)
+        const placeholders = bookmarkIds
+          .map((_, i) => `($${i + 1}, $${bookmarkIds.length + 1})`)
           .join(", ");
+        const params = [...bookmarkIds, targetTagId];
         await pool.query(
-          `INSERT INTO bookmark_tags (bookmark_id, tag_id) VALUES ${values} ON CONFLICT DO NOTHING`
+          `INSERT INTO bookmark_tags (bookmark_id, tag_id) VALUES ${placeholders} ON CONFLICT DO NOTHING`,
+          params
         );
       }
 

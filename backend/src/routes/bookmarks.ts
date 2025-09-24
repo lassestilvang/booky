@@ -17,13 +17,18 @@ router.post(
     }
 
     try {
-      const domain = new URL(url).hostname;
+      let domain: string;
+      try {
+        domain = new URL(url).hostname;
+      } catch {
+        return res.status(400).json({ error: "Invalid URL" });
+      }
 
       const result = await pool.query(
         `INSERT INTO bookmarks (owner_id, collection_id, url, excerpt, domain)
          VALUES ($1, $2, $3, $4, $5)
          RETURNING id`,
-        [req.user!.id, collectionId || null, url, notes || null, domain]
+        [req.user!.userId, collectionId || null, url, notes || null, domain]
       );
 
       const bookmarkId = result.rows[0].id;
@@ -45,7 +50,7 @@ router.get(
   authenticateToken,
   async (req: AuthRequest, res: express.Response) => {
     const { collection, tags, q, view, limit = 20, offset = 0 } = req.query;
-    const ownerId = req.user!.id;
+    const ownerId = req.user!.userId;
 
     let query = `SELECT * FROM bookmarks WHERE owner_id = $${1}`;
     let params: any[] = [ownerId];
@@ -111,7 +116,7 @@ router.get(
       // Fetch bookmark
       const bookmarkResult = await pool.query(
         "SELECT * FROM bookmarks WHERE id = $1 AND owner_id = $2",
-        [bookmarkId, req.user!.id]
+        [bookmarkId, req.user!.userId]
       );
 
       if (bookmarkResult.rows.length === 0) {
@@ -123,7 +128,7 @@ router.get(
       // Fetch highlights
       const highlightsResult = await pool.query(
         "SELECT * FROM highlights WHERE bookmark_id = $1 AND owner_id = $2 ORDER BY created_at",
-        [bookmarkId, req.user!.id]
+        [bookmarkId, req.user!.userId]
       );
 
       const highlights = highlightsResult.rows;
@@ -157,7 +162,7 @@ router.put(
              updated_at = CURRENT_TIMESTAMP
          WHERE id = $4 AND owner_id = $5
          RETURNING *`,
-        [title, excerpt, collection_id, bookmarkId, req.user!.id]
+        [title, excerpt, collection_id, bookmarkId, req.user!.userId]
       );
 
       if (result.rows.length === 0) {
@@ -185,7 +190,7 @@ router.delete(
     try {
       const result = await pool.query(
         "DELETE FROM bookmarks WHERE id = $1 AND owner_id = $2",
-        [bookmarkId, req.user!.id]
+        [bookmarkId, req.user!.userId]
       );
 
       if (result.rowCount === 0) {
@@ -211,7 +216,7 @@ router.post(
       return res.status(400).json({ error: "Invalid request" });
     }
 
-    const ownerId = req.user!.id;
+    const ownerId = req.user!.userId;
 
     try {
       if (action === "move") {
