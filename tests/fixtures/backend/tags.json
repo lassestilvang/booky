@@ -1,0 +1,32 @@
+[
+  {
+    "id": 1,
+    "owner_id": 1,
+    "name": "React",
+    "normalized_name": "react"
+  },
+  {
+    "id": 2,
+    "owner_id": 1,
+    "name": "JavaScript",
+    "normalized_name": "javascript"
+  },
+  {
+    "id": 3,
+    "owner_id": 1,
+    "name": "TypeScript",
+    "normalized_name": "typescript"
+  },
+  {
+    "id": 4,
+    "owner_id": 2,
+    "name": "Baking",
+    "normalized_name": "baking"
+  },
+  {
+    "id": 5,
+    "owner_id": 2,
+    "name": "Desserts",
+    "normalized_name": "desserts"
+  }
+]

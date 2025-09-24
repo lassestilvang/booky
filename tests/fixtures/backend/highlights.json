@@ -1,0 +1,35 @@
+[
+  {
+    "id": 1,
+    "bookmark_id": 1,
+    "owner_id": 1,
+    "text_selected": "Hooks are functions that let you 'hook into' React state and lifecycle features from function components.",
+    "color": "#FFFF00",
+    "annotation_md": "This is the key definition of React Hooks.",
+    "position_context": "Paragraph 2, line 5",
+    "snapshot_id": null,
+    "created_at": "2023-01-26T10:15:00Z"
+  },
+  {
+    "id": 2,
+    "bookmark_id": 1,
+    "owner_id": 1,
+    "text_selected": "useState is a Hook that lets you add React state to function components.",
+    "color": "#00FF00",
+    "annotation_md": "useState is the most basic Hook for state management.",
+    "position_context": "Paragraph 3, line 12",
+    "snapshot_id": null,
+    "created_at": "2023-01-26T10:20:00Z"
+  },
+  {
+    "id": 3,
+    "bookmark_id": 2,
+    "owner_id": 1,
+    "text_selected": "TypeScript is a typed superset of JavaScript that compiles to plain JavaScript.",
+    "color": "#FF0000",
+    "annotation_md": "Core concept of TypeScript.",
+    "position_context": "Introduction paragraph",
+    "snapshot_id": null,
+    "created_at": "2023-02-11T15:45:00Z"
+  }
+]

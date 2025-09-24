@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Booky Popup</title>
+    <style>
+      body {
+        width: 300px;
+        padding: 10px;
+      }
+      label {
+        display: block;
+        margin-bottom: 5px;
+      }
+      input,
+      textarea,
+      select {
+        width: 100%;
+        margin-bottom: 10px;
+      }
+      button {
+        margin-right: 5px;
+      }
+    </style>
+  </head>
+  <body>
+    <h3>Save to Booky</h3>
+    <label>Title: <input id="title" type="text" /></label>
+    <label>Notes: <textarea id="notes"></textarea></label>
+    <label
+      >Collection:
+      <select id="collection">
+        <option value="">Select Collection</option>
+      </select></label
+    >
+    <button id="saveBookmark">Save Bookmark</button>
+    <button id="saveHighlight">Save Highlight</button>
+    <button id="login">Login</button>
+    <script src="popup.js"></script>
+  </body>
+</html>

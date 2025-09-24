@@ -1,0 +1,75 @@
+{
+  "bookmarks": {
+    "success": {
+      "data": [
+        {
+          "id": "1",
+          "title": "Understanding React Hooks",
+          "url": "https://example.com/react-hooks",
+          "description": "A comprehensive guide to React Hooks and their usage patterns.",
+          "tags": ["react", "javascript"],
+          "collectionId": "1",
+          "createdAt": "2023-01-25T12:00:00Z",
+          "updatedAt": "2023-01-25T12:00:00Z"
+        }
+      ],
+      "message": "Bookmarks retrieved successfully"
+    },
+    "paginated": {
+      "data": [
+        {
+          "id": "1",
+          "title": "Understanding React Hooks",
+          "url": "https://example.com/react-hooks",
+          "description": "A comprehensive guide to React Hooks and their usage patterns.",
+          "tags": ["react", "javascript"],
+          "collectionId": "1",
+          "createdAt": "2023-01-25T12:00:00Z",
+          "updatedAt": "2023-01-25T12:00:00Z"
+        }
+      ],
+      "total": 25,
+      "page": 1,
+      "limit": 10
+    }
+  },
+  "collections": {
+    "success": {
+      "data": [
+        {
+          "id": "1",
+          "name": "Tech Articles",
+          "description": "Collection of technology articles and tutorials",
+          "createdAt": "2023-01-20T11:00:00Z",
+          "updatedAt": "2023-01-20T11:00:00Z"
+        }
+      ],
+      "message": "Collections retrieved successfully"
+    }
+  },
+  "user": {
+    "success": {
+      "data": {
+        "id": "1",
+        "name": "John Doe",
+        "email": "john.doe@example.com",
+        "createdAt": "2023-01-15T10:30:00Z"
+      },
+      "message": "User profile retrieved successfully"
+    }
+  },
+  "errors": {
+    "notFound": {
+      "error": "Resource not found",
+      "message": "The requested resource could not be found"
+    },
+    "unauthorized": {
+      "error": "Unauthorized",
+      "message": "Authentication required"
+    },
+    "validation": {
+      "error": "Validation error",
+      "message": "Invalid input data provided"
+    }
+  }
+}

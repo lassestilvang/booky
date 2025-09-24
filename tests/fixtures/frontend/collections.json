@@ -1,0 +1,16 @@
+[
+  {
+    "id": "1",
+    "name": "Tech Articles",
+    "description": "Collection of technology articles and tutorials",
+    "createdAt": "2023-01-20T11:00:00Z",
+    "updatedAt": "2023-01-20T11:00:00Z"
+  },
+  {
+    "id": "2",
+    "name": "Recipes",
+    "description": "Favorite recipes and cooking tips",
+    "createdAt": "2023-03-15T08:45:00Z",
+    "updatedAt": "2023-03-15T08:45:00Z"
+  }
+]

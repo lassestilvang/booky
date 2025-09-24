@@ -1,0 +1,181 @@
+{
+  "auth": {
+    "register": {
+      "request": {
+        "email": "newuser@example.com",
+        "password": "securepassword123",
+        "name": "New User"
+      },
+      "response": {
+        "user": {
+          "id": 4,
+          "email": "newuser@example.com",
+          "name": "New User",
+          "created_at": "2023-05-01T10:00:00Z",
+          "plan": "free"
+        },
+        "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
+      }
+    },
+    "login": {
+      "request": {
+        "email": "john.doe@example.com",
+        "password": "password123"
+      },
+      "response": {
+        "user": {
+          "id": 1,
+          "email": "john.doe@example.com",
+          "name": "John Doe",
+          "created_at": "2023-01-15T10:30:00Z",
+          "plan": "free"
+        },
+        "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
+      }
+    }
+  },
+  "collections": {
+    "create": {
+      "request": {
+        "title": "New Collection",
+        "icon": "📁",
+        "is_public": false
+      },
+      "response": {
+        "id": 4,
+        "owner_id": 1,
+        "title": "New Collection",
+        "icon": "📁",
+        "is_public": false,
+        "share_slug": "new-collection-ghi789",
+        "created_at": "2023-05-02T14:20:00Z",
+        "updated_at": "2023-05-02T14:20:00Z"
+      }
+    },
+    "list": {
+      "response": [
+        {
+          "id": 1,
+          "owner_id": 1,
+          "title": "Tech Articles",
+          "icon": "📚",
+          "is_public": false,
+          "share_slug": "tech-articles-abc123",
+          "created_at": "2023-01-20T11:00:00Z",
+          "updated_at": "2023-01-20T11:00:00Z"
+        },
+        {
+          "id": 2,
+          "owner_id": 1,
+          "title": "Design Inspiration",
+          "icon": "🎨",
+          "is_public": true,
+          "share_slug": "design-inspo-def456",
+          "created_at": "2023-02-01T16:30:00Z",
+          "updated_at": "2023-02-05T10:15:00Z"
+        }
+      ]
+    }
+  },
+  "bookmarks": {
+    "create": {
+      "request": {
+        "url": "https://example.com/new-article",
+        "title": "New Article",
+        "excerpt": "An interesting new article",
+        "collection_id": 1
+      },
+      "response": {
+        "id": 5,
+        "owner_id": 1,
+        "collection_id": 1,
+        "title": "New Article",
+        "url": "https://example.com/new-article",
+        "excerpt": "An interesting new article",
+        "content_snapshot_path": null,
+        "content_indexed": false,
+        "type": null,
+        "domain": "example.com",
+        "cover_url": null,
+        "is_duplicate": false,
+        "is_broken": false,
+        "created_at": "2023-05-03T09:30:00Z",
+        "updated_at": "2023-05-03T09:30:00Z"
+      }
+    }
+  },
+  "highlights": {
+    "create": {
+      "request": {
+        "text_selected": "This is an important point",
+        "color": "#FFFF00",
+        "annotation_md": "Key insight here",
+        "position_context": "Paragraph 5"
+      },
+      "response": {
+        "id": 4,
+        "bookmark_id": 1,
+        "owner_id": 1,
+        "text_selected": "This is an important point",
+        "color": "#FFFF00",
+        "annotation_md": "Key insight here",
+        "position_context": "Paragraph 5",
+        "created_at": "2023-05-04T11:15:00Z"
+      }
+    }
+  },
+  "search": {
+    "query": {
+      "request": {
+        "q": "react hooks",
+        "tags": "javascript,react",
+        "collection_id": 1
+      },
+      "response": [
+        {
+          "id": 1,
+          "owner_id": 1,
+          "collection_id": 1,
+          "title": "Understanding React Hooks",
+          "url": "https://example.com/react-hooks",
+          "excerpt": "A comprehensive guide to React Hooks and their usage patterns.",
+          "content_snapshot_path": "/snapshots/react-hooks.html",
+          "content_indexed": true,
+          "type": "article",
+          "domain": "example.com",
+          "cover_url": "https://example.com/cover1.jpg",
+          "is_duplicate": false,
+          "is_broken": false,
+          "created_at": "2023-01-25T12:00:00Z",
+          "updated_at": "2023-01-25T12:00:00Z",
+          "tags": [
+            {
+              "id": 1,
+              "name": "React",
+              "normalized_name": "react"
+            },
+            {
+              "id": 2,
+              "name": "JavaScript",
+              "normalized_name": "javascript"
+            }
+          ]
+        }
+      ]
+    }
+  },
+  "errors": {
+    "unauthorized": {
+      "error": "unauthorized",
+      "message": "Authentication required"
+    },
+    "not_found": {
+      "error": "not_found",
+      "message": "Resource not found"
+    },
+    "validation_error": {
+      "error": "validation_error",
+      "message": "Invalid input data"
+    }
+  }
+}

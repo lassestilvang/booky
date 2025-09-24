@@ -1,0 +1,20 @@
+[
+  {
+    "id": "local_1",
+    "url": "https://example.com/react-hooks",
+    "title": "Understanding React Hooks",
+    "notes": "Great article about React Hooks",
+    "collectionId": "1",
+    "status": "pending",
+    "createdAt": "2023-01-25T12:00:00Z"
+  },
+  {
+    "id": "local_2",
+    "url": "https://example.com/typescript-guide",
+    "title": "TypeScript Best Practices",
+    "notes": "Useful TypeScript tips",
+    "collectionId": "1",
+    "status": "synced",
+    "createdAt": "2023-02-10T14:30:00Z"
+  }
+]
