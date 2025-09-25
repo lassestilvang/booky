@@ -12,7 +12,7 @@ RUN npm ci
 COPY . .
 
 # Expose port
-EXPOSE 3000
+EXPOSE 5173
 
 # Start the development server
 CMD ["npm", "run", "dev"]

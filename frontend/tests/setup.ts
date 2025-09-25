@@ -1,18 +1,13 @@
 import "@testing-library/jest-dom";
+import { beforeAll, afterEach, afterAll } from "vitest";
+import { server } from "./mocks/server";
 
-// Mock axios for API calls
-jest.mock("axios", () => ({
-  __esModule: true,
-  default: {
-    get: jest.fn(),
-    post: jest.fn(),
-    put: jest.fn(),
-    delete: jest.fn(),
-    create: jest.fn(() => ({
-      get: jest.fn(),
-      post: jest.fn(),
-      put: jest.fn(),
-      delete: jest.fn(),
-    })),
-  },
-}));
+// Establish API mocking before all tests
+beforeAll(() => server.listen());
+
+// Reset any request handlers that we may add during the tests,
+// so they don't affect other tests
+afterEach(() => server.resetHandlers());
+
+// Clean up after all tests are done
+afterAll(() => server.close());

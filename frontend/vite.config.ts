@@ -13,4 +13,8 @@ export default defineConfig({
       requireEnv: true,
     }),
   ],
+  server: {
+    host: "0.0.0.0",
+    port: 5173,
+  },
 });

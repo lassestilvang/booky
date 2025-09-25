@@ -227,7 +227,7 @@ describe("Extension Workflow Integration Tests", () => {
   });
 
   describe("Authentication Workflow", () => {
-    test("should handle login and enable functionality", async () => {
+    test("should handle login with email/password and enable functionality", async () => {
       // Setup unauthenticated state
       chrome.storage.local.get.mockResolvedValue({});
       chrome.runtime.sendMessage.mockImplementation((message) => {
@@ -247,9 +247,19 @@ describe("Extension Workflow Integration Tests", () => {
 
       await new Promise((resolve) => setTimeout(resolve, 0));
 
-      // Verify login button is shown
-      const loginBtn = document.getElementById("login");
-      expect(loginBtn.style.display).toBe("block");
+      // Verify login form is shown
+      const loginForm = document.getElementById("loginForm");
+      const bookmarkForm = document.getElementById("bookmarkForm");
+      expect(loginForm.style.display).toBe("block");
+      expect(bookmarkForm.style.display).toBe("none");
+
+      // Fill login form
+      const emailInput = document.getElementById("email");
+      const passwordInput = document.getElementById("password");
+      const loginBtn = document.getElementById("loginBtn");
+
+      emailInput.value = "user@example.com";
+      passwordInput.value = "password123";
 
       // Simulate login
       const loginHandler = loginBtn.addEventListener.mock.calls.find(
@@ -261,6 +271,10 @@ describe("Extension Workflow Integration Tests", () => {
       // Verify login flow
       expect(chrome.runtime.sendMessage).toHaveBeenCalledWith({
         action: "login",
+        data: {
+          email: "user@example.com",
+          password: "password123",
+        },
       });
 
       // After login, auth should be rechecked
@@ -281,10 +295,12 @@ describe("Extension Workflow Integration Tests", () => {
       await new Promise((resolve) => setTimeout(resolve, 0));
 
       // Verify authenticated UI
-      const loginBtn = document.getElementById("login");
+      const loginForm = document.getElementById("loginForm");
+      const bookmarkForm = document.getElementById("bookmarkForm");
       const saveBookmarkBtn = document.getElementById("saveBookmark");
 
-      expect(loginBtn.style.display).toBe("none");
+      expect(loginForm.style.display).toBe("none");
+      expect(bookmarkForm.style.display).toBe("block");
       expect(saveBookmarkBtn.disabled).toBe(false);
     });
   });

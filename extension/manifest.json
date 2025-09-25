@@ -3,7 +3,7 @@
   "name": "Booky Extension",
   "version": "1.0",
   "description": "A Chrome extension for Booky",
-  "permissions": ["activeTab", "storage", "scripting", "identity"],
+  "permissions": ["activeTab", "storage", "scripting"],
   "action": {
     "default_popup": "popup.html"
   },

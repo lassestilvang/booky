@@ -94,7 +94,45 @@ router.get(
 
     try {
       const result = await pool.query(query, params);
-      res.json(result.rows);
+
+      // Get total count for pagination
+      let countQuery = `SELECT COUNT(*) FROM bookmarks WHERE owner_id = $${1}`;
+      let countParams: any[] = [ownerId];
+      let countParamIndex = 2;
+
+      if (collection) {
+        countQuery += ` AND collection_id = $${countParamIndex}`;
+        countParams.push(parseInt(collection as string));
+        countParamIndex++;
+      }
+
+      if (q) {
+        countQuery += ` AND to_tsvector('english', COALESCE(title, '') || ' ' || COALESCE(excerpt, '')) @@ plainto_tsquery('english', $${countParamIndex})`;
+        countParams.push(q);
+        countParamIndex++;
+      }
+
+      if (tags) {
+        const tagArray = (tags as string).split(",").map((t) => t.trim());
+        countQuery += ` AND id IN (SELECT bt.bookmark_id FROM bookmark_tags bt JOIN tags t ON bt.tag_id = t.id WHERE t.name = ANY($${countParamIndex}) AND t.owner_id = $${
+          countParamIndex + 1
+        })`;
+        countParams.push(tagArray, ownerId);
+      }
+
+      const countResult = await pool.query(countQuery, countParams);
+      const total = parseInt(countResult.rows[0].count);
+
+      res.json({
+        data: result.rows,
+        total,
+        page:
+          Math.floor(
+            (parseInt(offset as string) || 0) /
+              (parseInt(limit as string) || 20)
+          ) + 1,
+        limit: parseInt(limit as string) || 20,
+      });
     } catch (error) {
       console.error(error);
       res.status(500).json({ error: "Internal server error" });

@@ -1,4 +1,5 @@
 import express from "express";
+import cors from "cors";
 import dotenv from "dotenv";
 import authRoutes from "./routes/auth";
 import collectionsRoutes from "./routes/collections";
@@ -22,6 +23,7 @@ if (isNaN(PORT)) {
 }
 
 // Middleware
+app.use(cors());
 app.use(express.json());
 
 // Routes

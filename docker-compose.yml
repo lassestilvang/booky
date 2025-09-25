@@ -37,9 +37,10 @@ services:
     environment:
       DATABASE_URL: postgresql://booky_user:booky_password@postgres:5432/booky
       REDIS_URL: redis://redis:6379
-      MEILI_URL: http://meilisearch:7700
+      MEILI_HOST: http://meilisearch:7700
       MEILI_MASTER_KEY: masterKey
       JWT_SECRET: your-secret-key
+      JWT_REFRESH_SECRET: your-refresh-secret-key
     depends_on:
       - postgres
       - redis
@@ -58,6 +59,7 @@ services:
       - backend
     volumes:
       - ./frontend:/app
+      - ./tests:/tests
       - /app/node_modules
 
 volumes:

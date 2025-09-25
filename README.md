@@ -134,7 +134,7 @@ npm run seed
 
 This will create:
 
-- A test user (email: test@example.com, password: password123)
+- A test user (email: test@example.com, password: Password123!)
 - A sample collection with bookmarks
 
 ## Deployment

@@ -6,7 +6,9 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
   if (request.action === "checkAuth") {
     checkAuth(sendResponse);
   } else if (request.action === "login") {
-    login(sendResponse);
+    login(request.data, sendResponse);
+  } else if (request.action === "logout") {
+    logout(sendResponse);
   } else if (request.action === "getCollections") {
     getCollections(sendResponse);
   } else if (request.action === "saveBookmark") {
@@ -22,13 +24,39 @@ async function checkAuth(sendResponse) {
   sendResponse({ authenticated: !!token });
 }
 
-async function login(sendResponse) {
+async function login(data, sendResponse) {
   try {
-    const token = await chrome.identity.getAuthToken({ interactive: true });
-    await storeToken(token);
+    const response = await fetch(`${API_BASE}/auth/login`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        email: data.email,
+        password: data.password,
+      }),
+    });
+
+    if (!response.ok) {
+      const errorData = await response.json();
+      throw new Error(errorData.message || "Login failed");
+    }
+
+    const result = await response.json();
+    await storeToken(result.token);
     sendResponse({ success: true });
   } catch (error) {
     console.error("Login failed:", error);
+    sendResponse({ success: false, error: error.message });
+  }
+}
+
+async function logout(sendResponse) {
+  try {
+    await chrome.storage.local.remove(["authToken"]);
+    sendResponse({ success: true });
+  } catch (error) {
+    console.error("Logout failed:", error);
     sendResponse({ success: false, error: error.message });
   }
 }

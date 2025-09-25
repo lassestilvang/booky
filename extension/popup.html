@@ -23,18 +23,29 @@
     </style>
   </head>
   <body>
-    <h3>Save to Booky</h3>
-    <label>Title: <input id="title" type="text" /></label>
-    <label>Notes: <textarea id="notes"></textarea></label>
-    <label
-      >Collection:
-      <select id="collection">
-        <option value="">Select Collection</option>
-      </select></label
-    >
-    <button id="saveBookmark">Save Bookmark</button>
-    <button id="saveHighlight">Save Highlight</button>
-    <button id="login">Login</button>
+    <div id="loginForm">
+      <h3>Login to Booky</h3>
+      <label>Email: <input id="email" type="email" /></label>
+      <label>Password: <input id="password" type="password" /></label>
+      <button id="loginBtn">Login</button>
+      <div id="loginError" style="color: red; display: none;"></div>
+    </div>
+
+    <div id="bookmarkForm" style="display: none;">
+      <h3>Save to Booky</h3>
+      <label>Title: <input id="title" type="text" /></label>
+      <label>Notes: <textarea id="notes"></textarea></label>
+      <label
+        >Collection:
+        <select id="collection">
+          <option value="">Select Collection</option>
+        </select></label
+      >
+      <button id="saveBookmark">Save Bookmark</button>
+      <button id="saveHighlight">Save Highlight</button>
+      <button id="logoutBtn">Logout</button>
+    </div>
+
     <script src="popup.js"></script>
   </body>
 </html>

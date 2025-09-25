@@ -68,39 +68,106 @@ describe("Background Script Tests", () => {
     });
 
     describe("login", () => {
-      test("should successfully authenticate and store token", async () => {
-        chrome.identity.getAuthToken.mockResolvedValue("new_auth_token");
+      test("should successfully authenticate with email/password and store token", async () => {
+        global.fetch.mockResolvedValue({
+          ok: true,
+          json: jest.fn().mockResolvedValue({ token: "new_jwt_token" }),
+        });
 
         const mockSendResponse = jest.fn();
+        const loginData = {
+          email: "user@example.com",
+          password: "password123",
+        };
 
-        triggerChromeMessage({ action: "login" }, {}, mockSendResponse);
+        triggerChromeMessage(
+          { action: "login", data: loginData },
+          {},
+          mockSendResponse
+        );
 
         await new Promise((resolve) => setTimeout(resolve, 0));
 
-        expect(chrome.identity.getAuthToken).toHaveBeenCalledWith({
-          interactive: true,
-        });
+        expect(global.fetch).toHaveBeenCalledWith(
+          "http://localhost:3000/v1/auth/login",
+          {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+              email: "user@example.com",
+              password: "password123",
+            }),
+          }
+        );
         expect(chrome.storage.local.set).toHaveBeenCalledWith({
-          authToken: "new_auth_token",
+          authToken: "new_jwt_token",
         });
         expect(mockSendResponse).toHaveBeenCalledWith({ success: true });
       });
 
       test("should handle login failure", async () => {
-        const loginError = new Error("Login failed");
-        chrome.identity.getAuthToken.mockRejectedValue(loginError);
+        global.fetch.mockResolvedValue({
+          ok: false,
+          json: jest.fn().mockResolvedValue({ message: "Invalid credentials" }),
+        });
+
+        const mockSendResponse = jest.fn();
+        const consoleSpy = jest.spyOn(console, "error").mockImplementation();
+        const loginData = {
+          email: "user@example.com",
+          password: "wrongpassword",
+        };
+
+        triggerChromeMessage(
+          { action: "login", data: loginData },
+          {},
+          mockSendResponse
+        );
+
+        await new Promise((resolve) => setTimeout(resolve, 0));
+
+        expect(mockSendResponse).toHaveBeenCalledWith({
+          success: false,
+          error: "Invalid credentials",
+        });
+
+        consoleSpy.mockRestore();
+      });
+    });
+
+    describe("logout", () => {
+      test("should successfully clear stored token", async () => {
+        const mockSendResponse = jest.fn();
+
+        triggerChromeMessage({ action: "logout" }, {}, mockSendResponse);
+
+        await new Promise((resolve) => setTimeout(resolve, 0));
+
+        expect(chrome.storage.local.remove).toHaveBeenCalledWith(["authToken"]);
+        expect(mockSendResponse).toHaveBeenCalledWith({ success: true });
+      });
+
+      test("should handle logout failure", async () => {
+        chrome.storage.local.remove.mockRejectedValue(
+          new Error("Storage error")
+        );
 
         const mockSendResponse = jest.fn();
         const consoleSpy = jest.spyOn(console, "error").mockImplementation();
 
-        triggerChromeMessage({ action: "login" }, {}, mockSendResponse);
+        triggerChromeMessage({ action: "logout" }, {}, mockSendResponse);
 
         await new Promise((resolve) => setTimeout(resolve, 0));
 
-        expect(consoleSpy).toHaveBeenCalledWith("Login failed:", loginError);
+        expect(consoleSpy).toHaveBeenCalledWith(
+          "Logout failed:",
+          expect.any(Error)
+        );
         expect(mockSendResponse).toHaveBeenCalledWith({
           success: false,
-          error: "Login failed",
+          error: "Storage error",
         });
 
         consoleSpy.mockRestore();

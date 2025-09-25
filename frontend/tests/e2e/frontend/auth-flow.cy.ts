@@ -5,18 +5,36 @@ describe("Authentication Flow", () => {
   });
 
   it("should login successfully with valid credentials", () => {
+    cy.intercept("POST", "http://localhost:3000/v1/auth/login", {
+      statusCode: 200,
+      body: {
+        user: {
+          id: "1",
+          name: "John Doe",
+          email: "john.doe@example.com",
+        },
+        token: "fake-jwt-token",
+        refreshToken: "fake-refresh-token",
+      },
+    }).as("loginRequest");
+
     cy.visit("/login");
 
-    // Fill in the login form with seeded user
-    cy.get("input[type='email']").type("test@example.com");
+    // Fill in the login form
+    cy.get("input[type='email']").type("john.doe@example.com");
     cy.get("input[type='password']").type("Password123!");
     cy.get("button[type='submit']").click();
 
-    // Wait for redirect to home
+    cy.wait("@loginRequest").its("request.body").should("deep.equal", {
+      email: "john.doe@example.com",
+      password: "Password123!",
+    });
+
     cy.url().should("eq", Cypress.config().baseUrl + "/");
-    // Check that token is stored (real token from backend)
-    cy.window().its("localStorage.accessToken").should("exist");
-    cy.window().its("localStorage.refreshToken").should("exist");
+    cy.window().its("localStorage.accessToken").should("eq", "fake-jwt-token");
+    cy.window()
+      .its("localStorage.refreshToken")
+      .should("eq", "fake-refresh-token");
   });
 
   it("should show error for invalid credentials", () => {
