@@ -4,6 +4,7 @@ import GridView from "./GridView";
 import HeadlinesView from "./HeadlinesView";
 import MasonryView from "./MasonryView";
 import ListView from "./ListView";
+import AddBookmarkModal from "./AddBookmarkModal";
 
 const BookmarksPage: React.FC = () => {
   const {
@@ -20,6 +21,7 @@ const BookmarksPage: React.FC = () => {
   } = useBookmarksStore();
 
   const [localSearch, setLocalSearch] = useState(searchQuery);
+  const [isModalOpen, setIsModalOpen] = useState(false);
   const loadMoreRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -129,12 +131,22 @@ const BookmarksPage: React.FC = () => {
           >
             List
           </button>
+          <button
+            onClick={() => setIsModalOpen(true)}
+            className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500"
+          >
+            + Add Bookmark
+          </button>
         </div>
       </div>
       {error && <div className="text-center py-4 text-red-600">{error}</div>}
       {!error && renderView()}
       {loading && <div className="text-center py-4">Loading more...</div>}
       <div ref={loadMoreRef} className="h-10" />
+      <AddBookmarkModal
+        isOpen={isModalOpen}
+        onClose={() => setIsModalOpen(false)}
+      />
     </div>
   );
 };

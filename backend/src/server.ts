@@ -1,14 +1,14 @@
+import dotenv from "dotenv";
+dotenv.config();
+
 import express from "express";
 import cors from "cors";
-import dotenv from "dotenv";
 import authRoutes from "./routes/auth";
 import collectionsRoutes from "./routes/collections";
 import bookmarksRoutes from "./routes/bookmarks";
 import highlightsRoutes from "./routes/highlights";
 import searchRoutes from "./routes/search";
 import tagsRoutes from "./routes/tags";
-
-dotenv.config();
 
 interface AppError extends Error {
   status?: number;
