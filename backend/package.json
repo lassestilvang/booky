@@ -15,7 +15,7 @@
   },
   "dependencies": {
     "@types/bcrypt": "^6.0.0",
-    "axios": "^1.6.0",
+    "axios": "^1.13.5",
     "bcrypt": "^6.0.0",
     "bullmq": "^5.1.0",
     "cheerio": "^1.0.0-rc.12",
